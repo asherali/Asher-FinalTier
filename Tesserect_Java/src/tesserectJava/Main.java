@@ -17,11 +17,16 @@ public class Main {
 	
 		Morpholgy_Operations morph_op=new Morpholgy_Operations();
 	
-		name=morph_op.Apply_Dilation(name);
+		//name=morph_op.Apply_Dilation(name);
 		name=morph_op.Apply_Erosion(name);
+		
+		Contours contours=new Contours();
+		name=contours.FindContours(name);
 		
 		File Filename=new File(name);
 		Tesseract tesseract=Tesseract.getInstance();
+		
+		
 		
 		try
 		{	
