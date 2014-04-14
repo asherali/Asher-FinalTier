@@ -60,14 +60,14 @@ public class Main {
 	            System.out.println("WIDTH: "+rect.width);
 	            System.out.println("AREA: "+cont_area[i]);
 	          //System.out.println(rect.x +","+rect.y+","+rect.height+","+rect.width);
-	            	  
+	            if(rect.height>18)  
 	              Core.rectangle(src_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,0,255));
 	             if(rect.height>18)
-	              Imgproc.drawContours(dest_img, contours, i, new Scalar(0,0,0),0,8,heirarchy,2,shift);
+	              Imgproc.drawContours(dest_img, contours, i, new Scalar(0,0,0),-1,8,heirarchy,2,shift);
 	              //if(rect.height>18)
-	             // Core.rectangle(dest_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,255,0));
+	              //Core.rectangle(dest_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,255,0));
 	     }
-               Imgproc.erode(dest_img, dest_img, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2)));
+              // Imgproc.erode(dest_img, dest_img, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2)));
  	         Highgui.imwrite("Final.jpg", dest_img);
 	         Highgui.imwrite("Original.jpg", src_img);
 	         
