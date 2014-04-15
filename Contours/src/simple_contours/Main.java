@@ -31,7 +31,7 @@ public class Main {
 		src_thresh=new Mat(src_img.size(), Core.DEPTH_MASK_8U);
 		src_dilate=new Mat(src_img.size(), Core.DEPTH_MASK_8U);
 		dest_img=Mat.zeros(src_img.size(), CvType.CV_8UC3);
-		Core.bitwise_not(dest_img, dest_img);
+		//Core.bitwise_not(dest_img, dest_img);
 		Highgui.imwrite("dest.jpg", dest_img);
 		
 		Imgproc.cvtColor(src_img, src_grey, Imgproc.COLOR_BGR2GRAY);
@@ -50,22 +50,27 @@ public class Main {
 	      Point shift=new Point(0,0);
 	      Imgproc.findContours(src_dilate, contours,heirarchy, Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE,shift);
 	      double[] cont_area =new double[contours.size()]; 
-		  
+	      Rect[] rect_arr=new Rect[contours.size()];
+	      
 	         for(int i=0; i< contours.size();i++)
 	         { 
 	            Rect rect = Imgproc.boundingRect(contours.get(i));
 	            cont_area[i]=Imgproc.contourArea(contours.get(i));
-	              
+	              rect_arr[i]=Imgproc.boundingRect(contours.get(i));
+	            
 	            System.out.println("Hight: "+rect.height);
 	            System.out.println("WIDTH: "+rect.width);
-	            System.out.println("AREA: "+cont_area[i]);
+	            //System.out.println("Cont AREA: "+cont_area[i]);
+	            System.out.println("rect AREA: "+rect_arr[i].area());
 	          //System.out.println(rect.x +","+rect.y+","+rect.height+","+rect.width);
-	            if(rect.height>18)  
+	              
+	              //System.out.println(rect_arr[i].x +","+rect_arr[i].y+","+rect_arr[i].height+","+rect_arr[i].width);
+	            if(rect.height>17)  
 	              Core.rectangle(src_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,0,255));
-	             if(rect.height>18)
-	              Imgproc.drawContours(dest_img, contours, i, new Scalar(0,0,0),-1,8,heirarchy,2,shift);
-	              //if(rect.height>18)
-	              //Core.rectangle(dest_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,255,0));
+	             if(rect.height>17)
+	              Imgproc.drawContours(dest_img, contours, i, new Scalar(255,255,255),-1,8,heirarchy,2,shift);
+	              if(rect.height>17)
+	              Core.rectangle(dest_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,255,0));
 	     }
               // Imgproc.erode(dest_img, dest_img, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2)));
  	         Highgui.imwrite("Final.jpg", dest_img);
