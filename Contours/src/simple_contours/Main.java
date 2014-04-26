@@ -51,9 +51,11 @@ public class Main {
 	      Imgproc.findContours(src_dilate, contours,heirarchy, Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE,shift);
 	      double[] cont_area =new double[contours.size()]; 
 	      Rect[] rect_arr=new Rect[contours.size()];
-	      
+	      int count=3;
 	         for(int i=0; i< contours.size();i++)
 	         { 
+	        	 int[] iBuff=new int[(int)heirarchy.total()*heirarchy.channels() ];
+	        	 heirarchy.get(0, 0,iBuff);
 	            Rect rect = Imgproc.boundingRect(contours.get(i));
 	            cont_area[i]=Imgproc.contourArea(contours.get(i));
 	              rect_arr[i]=Imgproc.boundingRect(contours.get(i));
@@ -67,11 +69,13 @@ public class Main {
 	              //System.out.println(rect_arr[i].x +","+rect_arr[i].y+","+rect_arr[i].height+","+rect_arr[i].width);
 	            if(rect.height>17)  
 	              Core.rectangle(src_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,0,255));
-	             if(rect.height>17)
+	             if(rect.height>3)
+	            	 if(iBuff[count]==-1)
 	              Imgproc.drawContours(dest_img, contours, i, new Scalar(255,255,255),-1,8,heirarchy,2,shift);
 	              if(rect.height>17)
 	              Core.rectangle(dest_img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,255,0));
-	     }
+	              count+=4;
+	         }
               // Imgproc.erode(dest_img, dest_img, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2)));
  	         Highgui.imwrite("Final.jpg", dest_img);
 	         Highgui.imwrite("Original.jpg", src_img);
