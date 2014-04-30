@@ -1,12 +1,14 @@
 package simple_contours;
 
+
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.imageio.ImageIO;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -17,14 +19,18 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
-import com.recognition.software.jdeskew.*;
+
+
 
 public class Main {
 
 	public static void main(String[] args) {
+		
+		 
+		
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		Mat src_img,src_grey,src_blur,src_thresh,src_dilate,dest_img; 
-		src_img=Highgui.imread("test9.jpg",Imgproc.COLOR_BGR2GRAY);
+		src_img=Highgui.imread("test5j.jpg",Imgproc.COLOR_BGR2GRAY);
 		
 		
 		src_grey=new Mat(src_img.size(), Core.DEPTH_MASK_8U);
@@ -32,31 +38,40 @@ public class Main {
 		src_thresh=new Mat(src_img.size(), Core.DEPTH_MASK_8U);
 		src_dilate=new Mat(src_img.size(), Core.DEPTH_MASK_8U);
 		dest_img=Mat.zeros(src_img.size(), CvType.CV_8UC3);
-		
-		
+		//Mat mask=new Mat(); 
+		//Mat floodfill=Mat.zeros(src_img.size(), CvType.CV_8UC1);
 		
 		Imgproc.cvtColor(src_img, src_grey, Imgproc.COLOR_BGR2GRAY);
 		Imgproc.GaussianBlur(src_grey, src_blur, new Size(3, 3), 0);
 		Imgproc.threshold(src_blur, src_thresh, 80, 255, Imgproc.THRESH_BINARY_INV);
 		Imgproc.dilate(src_thresh, src_dilate, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2)));
 		
-		Core.bitwise_not(src_dilate, src_dilate);
+		//Core.inRange(src_dilate,new Scalar(255, 255, 255),new Scalar(255, 255, 255),mask);
+		//int Pcount=Core.countNonZero(mask);
+		
+		//Core.bitwise_not(src_dilate, src_dilate);
 		//currently finding contours for black bg and white fg
 		
-		Highgui.imwrite("dest.jpg", dest_img);
+		
 		Highgui.imwrite("Threshold.jpg", src_thresh);
 		Highgui.imwrite("Dilate.jpg", src_dilate);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-
-
+         //Imgproc.Canny(src_dilate, dest_img, 35, 90);
+         //Imgproc.dilate(dest_img, dest_img, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2)));
+ 		 //Imgproc.copyMakeBorder(dest_img, dest_img, 1, 1, 1, 1, Imgproc.BORDER_REPLICATE);
+         
+         //Point seed=new Point(15, 25);
+         //Imgproc.floodFill(floodfill, dest_img, seed, new Scalar(255));
+         //Highgui.imwrite("floodfill.jpg", floodfill);
+         Highgui.imwrite("dest.jpg", dest_img);
 	      List<MatOfPoint> contours = new ArrayList<MatOfPoint>();  
 	      Mat heirarchy= new Mat();
 	      Point shift=new Point(0,0);
 	      Imgproc.findContours(src_dilate, contours,heirarchy, Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_NONE,shift);
 	      //double[] cont_area =new double[contours.size()]; 
 	      int count=3;
-	      double height_perc= 0.50,width_perc=0.75;
+	      double height_perc= 0.50;
 	       int cont_size=contours.size();
 	      Rect[] rect_arr=new Rect[cont_size];
 	      double[] L_rects= new double[4];
@@ -116,19 +131,24 @@ public class Main {
  	         Highgui.imwrite("Final.jpg", dest_img);
 	         Highgui.imwrite("Original.jpg", src_img);
 	         
-	         
-	         
-	         File Filename=new File("final.jpg");
+	         BufferedImage bi;
+	        Deskew deskew=new Deskew();
+	         File Filename=new File("FinalOCR.jpg");
 	         Tesseract tesseract=Tesseract.getInstance();
-	   		
-	   		
 	   		
 	   		try
 	   		{	
-	   			String Result=tesseract.doOCR(Filename);
+	   			bi=deskew.ApplyDeskew();
+	   			String Result=tesseract.doOCR(bi);
 	   			System.out.println(Result);
+	   			ImageIO.write(bi, "jpg", Filename);
+	   			
 	   		}
 	   		catch(TesseractException e)
+	   		{
+	   			System.err.println(e.getMessage());
+	   		}
+	   		catch(IOException e)
 	   		{
 	   			System.err.println(e.getMessage());
 	   		}
