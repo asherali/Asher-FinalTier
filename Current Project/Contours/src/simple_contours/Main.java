@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import net.sourceforge.tess4j.TessAPI;
 import net.sourceforge.tess4j.TessAPI.TessBaseAPI;
+import net.sourceforge.tess4j.TessAPI1;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.opencv.core.Core;
@@ -33,10 +34,10 @@ public class Main {
 		
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		Mat src_img,proc_img,output; 
-		src_img=Highgui.imread("5.jpg",Imgproc.COLOR_BGR2GRAY);
+		src_img=Highgui.imread("test10.jpg",Imgproc.COLOR_BGR2GRAY);
 		
 		
-		
+	
 	
 		proc_img=Mat.zeros(src_img.size(), CvType.CV_8UC3);
 		output=Mat.zeros(src_img.size(), CvType.CV_8UC3);
@@ -123,10 +124,11 @@ public class Main {
 	   			BufferedImage bi;
 	   			Deskew deskew=new Deskew();
 	   			Tesseract tesseract=Tesseract.getInstance();
-	  		   // tesseract.setOcrEngineMode(2);
-	  		   // tesseract.setLanguage("eng");
-	  		    tesseract.setPageSegMode(10);
-	   			 {
+	  		   tesseract.setLanguage("eng");
+	  		    tesseract.setPageSegMode(8);
+	  		    tesseract.setTessVariable("tessedit_char_whitelist", "0123456789abcdefghjklmnopqrstuvwxyzABCDEFGHJKLNMPQRSTUVWXYZ");
+	   		    
+	  		    {
 	   				bi=deskew.ApplyDeskew("Filtered.jpg");
 		   			String Result=tesseract.doOCR(bi);
 		   			File Filename=new File("Ready2OCR.jpg");
